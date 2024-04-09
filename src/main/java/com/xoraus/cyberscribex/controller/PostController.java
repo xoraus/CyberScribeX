@@ -1,6 +1,7 @@
 package com.xoraus.cyberscribex.controller;
 
 import com.xoraus.cyberscribex.payload.PostDto;
+import com.xoraus.cyberscribex.payload.PostResponse;
 import com.xoraus.cyberscribex.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class PostController {
 
     // get all Posts
     @GetMapping
-    public List<PostDto> getAllPosts(
+    public PostResponse getAllPosts(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize){
         return postService.getAllPosts(pageNo, pageSize);

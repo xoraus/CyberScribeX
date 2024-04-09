@@ -3,6 +3,7 @@ package com.xoraus.cyberscribex.service.impl;
 import com.xoraus.cyberscribex.entity.Post;
 import com.xoraus.cyberscribex.exception.ResourceNotFoundException;
 import com.xoraus.cyberscribex.payload.PostDto;
+import com.xoraus.cyberscribex.payload.PostResponse;
 import com.xoraus.cyberscribex.repository.PostRepository;
 import com.xoraus.cyberscribex.service.PostService;
 import org.springframework.data.domain.Page;
@@ -33,7 +34,7 @@ public class PostServiceImp implements PostService {
     }
 
     @Override
-    public List<PostDto> getAllPosts(int pageNo, int pageSize) {
+    public PostResponse getAllPosts(int pageNo, int pageSize) {
 
         // create Pageable instance
         Pageable pageable = PageRequest.of(pageNo, pageSize);
@@ -43,7 +44,17 @@ public class PostServiceImp implements PostService {
 
         List<Post> listOfPosts = posts.getContent();
 
-        return listOfPosts.stream().map(this::mapToDTO).collect(Collectors.toList());
+        List<PostDto> content=  listOfPosts.stream().map(this::mapToDTO).collect(Collectors.toList());
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(content);
+        postResponse.setPageNo(posts.getNumber());
+        postResponse.setPageSize(posts.getSize());
+        postResponse.setTotalElements(posts.getTotalElements());
+        postResponse.setTotalPages(posts.getTotalPages());
+        postResponse.setLast(posts.isLast());
+
+        return postResponse;
     }
 
     @Override
