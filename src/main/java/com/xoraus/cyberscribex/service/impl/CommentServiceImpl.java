@@ -10,6 +10,8 @@ import com.xoraus.cyberscribex.service.CommentService;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.ReadOnlyFileSystemException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -34,6 +36,14 @@ public class CommentServiceImpl implements CommentService {
 
         Comment newComment =  commentRepository.save(comment);
         return mapToDto(newComment);
+    }
+
+    @Override
+    public List<CommentDto> getAllComments(Long postId) {
+        // retrieve comments by postId
+        List<Comment> comments = commentRepository.findByPostId(postId);
+
+        return comments.stream().map(comment -> mapToDto(comment)).collect(Collectors.toList());
     }
 
     private CommentDto mapToDto(Comment comment) {
