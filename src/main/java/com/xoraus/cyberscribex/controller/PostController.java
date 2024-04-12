@@ -7,15 +7,14 @@ import com.xoraus.cyberscribex.utils.AppConstants;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
 
-    private PostService postService;
+    private final PostService postService;
 
     public PostController(PostService postService) {
         this.postService = postService;
@@ -23,6 +22,7 @@ public class PostController {
 
     // create blog post
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
@@ -47,6 +47,7 @@ public class PostController {
 
     // update post by id
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto, @PathVariable(name ="id") long id){
         PostDto updatedPost = postService.updatePost(postDto, id);
         return new ResponseEntity<>(updatedPost, HttpStatus.OK);
@@ -54,6 +55,7 @@ public class PostController {
 
     // delete post by id
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deletePost(@PathVariable(name ="id") long id){
         postService.deletePostById(id);
         return new ResponseEntity<>("Post deleted successfully", HttpStatus.OK);
