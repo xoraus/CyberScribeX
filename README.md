@@ -13,26 +13,6 @@ This project is aimed at developing a robust blogging application with a focus o
 3. **Authentication and Authorization**: Implement Registration, Login, and Security measures.
 4. **Category Management**: Create, Read, Update, and Delete Categories.
 
-## Posts Management
-
-Build REST APIs for managing Posts:
-
-1. Create Post REST API.
-2. Get Single Post REST API.
-3. Get All Posts REST API.
-4. Get All Posts REST API with Pagination and Sorting.
-5. Update Post REST API.
-6. Delete Post REST API.
-
-## Comments Management for Post
-
-Build REST APIs for managing Comments related to Posts (one-to-many mapping):
-
-1. Create Comment REST API - `/posts/{post-id}/comments`.
-2. Get Single Comment REST API - `/posts/{post-id}/comments/{comment-id}`.
-3. Get All Comments REST API - `/posts/{post-id}/comments`.
-4. Update Comment REST API - `/posts/{post-id}/comments/{comment-id}`.
-5. Delete Comment REST API - `/posts/{post-id}/comments/{comment-id}`.
 
 ## Exceptions Handling and Validations
 
@@ -42,21 +22,10 @@ Build REST APIs for managing Comments related to Posts (one-to-many mapping):
 ## Securing REST APIs
 
 1. Secure REST APIs using Database Authentication.
-2. Implement Login/Signin REST API.
+2. Implement LogIn/SignIn REST API.
 3. Implement Register/SignUp REST API.
 4. Use JWT (JSON Web Token) token-based Authentication to secure the REST APIs.
 5. Implement Role-based security with ADMIN and USER roles.
-
-## Category Management
-
-Build REST APIs for managing Categories:
-
-1. Create Category REST API.
-2. Get Single Category REST API.
-3. Get All Categories REST API.
-4. Update Category REST API.
-5. Delete Category REST API.
-6. Get Posts By Category REST API.
 
 
 ## 💻 Usage
