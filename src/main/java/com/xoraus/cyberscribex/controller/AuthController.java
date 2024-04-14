@@ -1,6 +1,7 @@
 package com.xoraus.cyberscribex.controller;
 
 import com.xoraus.cyberscribex.payload.LoginDto;
+import com.xoraus.cyberscribex.payload.RegisterDto;
 import com.xoraus.cyberscribex.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,4 +26,10 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    // Build Register REST API
+    @PostMapping(value = {"/register", "/signup"})
+    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto){
+        String response = authService.register(registerDto);
+        return ResponseEntity.ok(response);
+    }
 }
