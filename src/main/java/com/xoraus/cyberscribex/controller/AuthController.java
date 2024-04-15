@@ -1,5 +1,6 @@
 package com.xoraus.cyberscribex.controller;
 
+import com.xoraus.cyberscribex.payload.JWTAuthResponse;
 import com.xoraus.cyberscribex.payload.LoginDto;
 import com.xoraus.cyberscribex.payload.RegisterDto;
 import com.xoraus.cyberscribex.service.AuthService;
@@ -21,9 +22,11 @@ public class AuthController {
 
     // Build Login REST API
     @PostMapping(value = {"/login", "/signin"})
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
-        String response = authService.login(loginDto);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginDto loginDto){
+        String token = authService.login(loginDto);
+        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 
     // Build Register REST API
