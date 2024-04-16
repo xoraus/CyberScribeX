@@ -4,6 +4,7 @@ import com.xoraus.cyberscribex.payload.JWTAuthResponse;
 import com.xoraus.cyberscribex.payload.LoginDto;
 import com.xoraus.cyberscribex.payload.RegisterDto;
 import com.xoraus.cyberscribex.service.AuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(
+        name = "REST APIs Authentication"
+)
 public class AuthController {
 
     private AuthService authService;
