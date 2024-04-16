@@ -4,6 +4,11 @@ import com.xoraus.cyberscribex.payload.PostDto;
 import com.xoraus.cyberscribex.payload.PostResponse;
 import com.xoraus.cyberscribex.service.PostService;
 import com.xoraus.cyberscribex.utils.AppConstants;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +19,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
+@Tag(
+        name = "CRUD REST APIs for Post Resource"
+)
 public class PostController {
 
     private final PostService postService;
@@ -22,9 +30,20 @@ public class PostController {
         this.postService = postService;
     }
 
-    // create blog post
-    @PostMapping
+
+    @Operation(
+            summary = "Create Post REST API",
+            description = "Create Post REST API is used to save post into database"
+    )
+    @ApiResponse(
+            responseCode = "201",
+            description = "Http Status 201 Created"
+    )
+    @SecurityRequirement(
+            name = "Bearer Authentication"
+    )
     @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping
     public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
@@ -48,14 +67,15 @@ public class PostController {
     }
 
     // update post by id
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto, @PathVariable(name ="id") long id){
         PostDto updatedPost = postService.updatePost(postDto, id);
         return new ResponseEntity<>(updatedPost, HttpStatus.OK);
     }
 
     // delete post by id
+    @SecurityRequirement(
+            name = "Bearer Authentication"
+    )
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deletePost(@PathVariable(name ="id") long id){
