@@ -13,6 +13,31 @@ This project is aimed at developing a robust blogging application with a focus o
 3. **Authentication and Authorization**: Implement Registration, Login, and Security measures.
 4. **Category Management**: Create, Read, Update, and Delete Categories.
 
+## Swagger Docs
+
+The project includes comprehensive Swagger documentation, providing detailed insights into the available REST APIs and their usage.
+
+![API Documentation](SwaggerDocs.png)
+
+## ✨ Features
+
+- **Post Management:**
+   - Create, retrieve, update, and delete blog posts 📝🔄
+   - Associate posts with categories and users 🤝
+   - View posts by user, category, or search by keywords 🔍
+   - Upload and serve post images 🌅
+   - Delete, update, and retrieve post details 📌
+   - 
+- **Category Management:**
+  - Create, retrieve, update, and delete blog categories 🗂️
+
+- **Comment Management:**
+   - Add comments to blog posts 💬
+   - Retrieve, update, and delete comments 🗑️
+
+- **Authentication:**
+   - Authenticate users and generate JWT tokens 🛡️
+   - Register new users 📝
 
 ## Exceptions Handling and Validations
 
