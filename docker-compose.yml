@@ -1,0 +1,72 @@
+# ============================================
+# CyberScribeX - Docker Compose Configuration
+# ============================================
+
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cyberscribex-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: CyberScribeDB
+      DB_USERNAME: cyberscribex
+      DB_PASSWORD: cyberscribex_secret
+      JWT_SECRET: ${JWT_SECRET:-Y3liZXJzY3JpYmV4LXN1cGVyLXNlY3JldC1rZXktZm9yLWp3dC1zaWduaW5nLW11c3QtYmUtYXQtbGVhc3QtMjU2LWJpdHMtbG9uZw==}
+      JWT_EXPIRATION: 86400000
+      JWT_REFRESH_EXPIRATION: 604800000
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - cyberscribex-network
+    restart: unless-stopped
+    volumes:
+      - app-uploads:/app/uploads
+
+  mysql:
+    image: mysql:8.0
+    container_name: cyberscribex-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root_secret
+      MYSQL_DATABASE: CyberScribeDB
+      MYSQL_USER: cyberscribex
+      MYSQL_PASSWORD: cyberscribex_secret
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - cyberscribex-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Optional: Redis for distributed caching (commented out by default)
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: cyberscribex-redis
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - cyberscribex-network
+  #   restart: unless-stopped
+
+volumes:
+  mysql-data:
+  app-uploads:
+
+networks:
+  cyberscribex-network:
+    driver: bridge
