@@ -1,72 +1,93 @@
 package com.xoraus.cyberscribex.service.impl;
 
 import com.xoraus.cyberscribex.entity.Category;
+import com.xoraus.cyberscribex.exception.CyberScribeXAPIException;
 import com.xoraus.cyberscribex.exception.ResourceNotFoundException;
+import com.xoraus.cyberscribex.mapper.CategoryMapper;
 import com.xoraus.cyberscribex.payload.CategoryDto;
 import com.xoraus.cyberscribex.repository.CategoryRepository;
 import com.xoraus.cyberscribex.service.CategoryService;
-import org.modelmapper.ModelMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class CategoryServiceImpl implements CategoryService {
+
     private final CategoryRepository categoryRepository;
-    private final ModelMapper modelMapper;
+    private final CategoryMapper categoryMapper;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, ModelMapper modelMapper) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
         this.categoryRepository = categoryRepository;
-        this.modelMapper = modelMapper;
+        this.categoryMapper = categoryMapper;
     }
 
     @Override
+    @Transactional
+    @CacheEvict(value = "categories", allEntries = true)
     public CategoryDto addCategory(CategoryDto categoryDto) {
-        Category category = modelMapper.map(categoryDto, Category.class);
+        if (categoryRepository.existsByName(categoryDto.getName())) {
+            throw new CyberScribeXAPIException(HttpStatus.CONFLICT,
+                    "Category with name '" + categoryDto.getName() + "' already exists");
+        }
+
+        Category category = categoryMapper.toEntity(categoryDto);
         Category savedCategory = categoryRepository.save(category);
-        return modelMapper.map(savedCategory, CategoryDto.class);
+
+        log.info("Category created with id: {}, name: {}", savedCategory.getId(), savedCategory.getName());
+        return categoryMapper.toDto(savedCategory);
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "categories", key = "#categoryId")
     public CategoryDto getCategory(Long categoryId) {
-
-        Category category = categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findActiveById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
-
-        return modelMapper.map(category, CategoryDto.class);
+        return categoryMapper.toDto(category);
     }
 
     @Override
+    @Transactional(readOnly = true)
+    @Cacheable(value = "categories", key = "'all'")
     public List<CategoryDto> getAllCategories() {
-
-        List<Category> categories = categoryRepository.findAll();
-
-        return categories.stream().map((category) -> modelMapper.map(category, CategoryDto.class))
-                .collect(Collectors.toList());
+        List<Category> categories = categoryRepository.findAllActive();
+        return categoryMapper.toDtoList(categories);
     }
 
     @Override
+    @Transactional
+    @CacheEvict(value = "categories", allEntries = true)
     public CategoryDto updateCategory(CategoryDto categoryDto, Long categoryId) {
-
-        Category category = categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findActiveById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
+
+        if (!category.getName().equals(categoryDto.getName()) && categoryRepository.existsByName(categoryDto.getName())) {
+            throw new CyberScribeXAPIException(HttpStatus.CONFLICT,
+                    "Category with name '" + categoryDto.getName() + "' already exists");
+        }
 
         category.setName(categoryDto.getName());
         category.setDescription(categoryDto.getDescription());
-        category.setId(categoryId);
 
         Category updatedCategory = categoryRepository.save(category);
-
-        return modelMapper.map(updatedCategory, CategoryDto.class);
+        log.info("Category updated with id: {}", updatedCategory.getId());
+        return categoryMapper.toDto(updatedCategory);
     }
 
     @Override
+    @Transactional
+    @CacheEvict(value = "categories", allEntries = true)
     public void deleteCategory(Long categoryId) {
-
-        Category category = categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findActiveById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
-
         categoryRepository.delete(category);
+        log.info("Category deleted with id: {}", categoryId);
     }
 }

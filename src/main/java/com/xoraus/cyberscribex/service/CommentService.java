@@ -1,6 +1,5 @@
 package com.xoraus.cyberscribex.service;
 
-import com.xoraus.cyberscribex.entity.Comment;
 import com.xoraus.cyberscribex.payload.CommentDto;
 
 import java.util.List;

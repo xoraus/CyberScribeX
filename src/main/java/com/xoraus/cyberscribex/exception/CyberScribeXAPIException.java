@@ -1,12 +1,21 @@
 package com.xoraus.cyberscribex.exception;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-public class CyberScribeXAPIException extends RuntimeException{
-    private HttpStatus httpStatus;
-    private String message;
+import java.io.Serial;
+
+@Getter
+public class CyberScribeXAPIException extends RuntimeException {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    private final HttpStatus httpStatus;
+    private final String message;
 
     public CyberScribeXAPIException(HttpStatus httpStatus, String message) {
+        super(message);
         this.httpStatus = httpStatus;
         this.message = message;
     }
@@ -15,14 +24,5 @@ public class CyberScribeXAPIException extends RuntimeException{
         super(parentMessage);
         this.httpStatus = httpStatus;
         this.message = message;
-    }
-
-    public HttpStatus getHttpStatus() {
-        return httpStatus;
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
     }
 }

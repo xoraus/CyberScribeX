@@ -1,28 +1,26 @@
 package com.xoraus.cyberscribex.exception;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.io.Serial;
+
+@Getter
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class ResourceNotFoundException extends RuntimeException{
-    private String resourceName;
-    private String fieldName;
-    private long fieldValue;
+public class ResourceNotFoundException extends RuntimeException {
 
-    public ResourceNotFoundException(String resourceName, String fieldName, long fieldValue) {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    private final String resourceName;
+    private final String fieldName;
+    private final transient Object fieldValue;
+
+    public ResourceNotFoundException(String resourceName, String fieldName, Object fieldValue) {
         super(String.format("%s not found with %s : '%s'", resourceName, fieldName, fieldValue));
-        this.fieldValue = fieldValue;
-        this.fieldName = fieldName;
         this.resourceName = resourceName;
-    }
-
-    public String getResourceName() {
-        return resourceName;
-    }
-    public String getFieldName() {
-        return fieldName;
-    }
-    public long getFieldValue() {
-        return fieldValue;
+        this.fieldName = fieldName;
+        this.fieldValue = fieldValue;
     }
 }
